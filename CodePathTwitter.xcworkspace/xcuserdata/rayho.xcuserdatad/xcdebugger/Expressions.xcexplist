@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "CodePathTwitter.TimelineCell.populate (CodePathTwitter.TimelineCell)(ObjectiveC.NSDictionary) -&gt; ():TimelineCell.swift">
+      </ContextState>
+      <ContextState
+         contextName = "CodePathTwitter.TimelineCell.populate (CodePathTwitter.TimelineCell)(CodePathTwitter.Tweet) -&gt; ():TimelineCell.swift">
+      </ContextState>
+      <ContextState
+         contextName = "CodePathTwitter.TimelineController.onHomeTimelineSuccess (CodePathTwitter.TimelineController)(ObjectiveC.NSNotification) -&gt; ():TimelineController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "moreTweets">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "CodePathTwitter.TimelineCell.layoutSubviews (CodePathTwitter.TimelineCell)() -&gt; ():TimelineCell.swift">
+      </ContextState>
+      <ContextState
+         contextName = "CodePathTwitter.Tweet.init (CodePathTwitter.Tweet.Type)(tweetDict : ObjectiveC.NSDictionary) -&gt; CodePathTwitter.Tweet:Tweet.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "dateFormatter.dateFromString(tweetDict[&quot;created_at&quot;] as NSString)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "CodePathTwitter.TwitterClient.onRequestAuthSuccess (CodePathTwitter.TwitterClient)(Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.BDBOAuthToken&gt;) -&gt; ():TwitterClient.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "BASE_URL.absoluteString">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

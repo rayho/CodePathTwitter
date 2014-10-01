@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="TweetActionButtons" customModule="CodePathTwitter" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PrR-db-FaE" userLabel="Reply">
+                    <rect key="frame" x="0.0" y="0.0" width="200" height="600"/>
+                    <state key="normal" image="Reply">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="ReplyPressed"/>
+                    <state key="highlighted" image="ReplyPressed"/>
+                    <connections>
+                        <action selector="onCancel:" destination="iN0-l3-epB" eventType="touchUpOutside" id="XTK-Bn-hZe"/>
+                        <action selector="onClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="j4O-RJ-dof"/>
+                        <action selector="onPress:" destination="iN0-l3-epB" eventType="touchDown" id="ABE-Mf-THX"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vas-lN-URq" userLabel="Favorite">
+                    <rect key="frame" x="400" y="0.0" width="200" height="600"/>
+                    <state key="normal" image="Favorite">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="FavoriteOn"/>
+                    <state key="highlighted" image="FavoritePressed"/>
+                    <connections>
+                        <action selector="onCancel:" destination="iN0-l3-epB" eventType="touchUpOutside" id="4Dm-vw-fHi"/>
+                        <action selector="onClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="81w-2b-IBr"/>
+                        <action selector="onPress:" destination="iN0-l3-epB" eventType="touchDown" id="IRd-NE-2pc"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PH0-jR-t0L" userLabel="Retweet">
+                    <rect key="frame" x="200" y="0.0" width="200" height="600"/>
+                    <state key="normal" image="Retweet">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="RetweetOn"/>
+                    <state key="highlighted" image="RetweetPressed"/>
+                    <connections>
+                        <action selector="onCancel:" destination="iN0-l3-epB" eventType="touchUpOutside" id="ZG8-te-yST"/>
+                        <action selector="onClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="IUH-58-2LL"/>
+                        <action selector="onPress:" destination="iN0-l3-epB" eventType="touchDown" id="au0-R1-F3U"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="PH0-jR-t0L" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="2dF-Ac-bne"/>
+                <constraint firstItem="PH0-jR-t0L" firstAttribute="leading" secondItem="PrR-db-FaE" secondAttribute="trailing" id="6mw-c4-3Wj"/>
+                <constraint firstItem="vas-lN-URq" firstAttribute="leading" secondItem="PH0-jR-t0L" secondAttribute="trailing" id="An7-V2-9LY"/>
+                <constraint firstAttribute="bottom" secondItem="PH0-jR-t0L" secondAttribute="bottom" id="HPx-Wk-I5p"/>
+                <constraint firstItem="vas-lN-URq" firstAttribute="width" secondItem="PH0-jR-t0L" secondAttribute="width" id="I3D-rk-q3P"/>
+                <constraint firstItem="vas-lN-URq" firstAttribute="leading" secondItem="PH0-jR-t0L" secondAttribute="trailing" id="If1-Wf-rwM"/>
+                <constraint firstItem="vas-lN-URq" firstAttribute="width" secondItem="PrR-db-FaE" secondAttribute="width" id="RT3-x1-mqZ"/>
+                <constraint firstItem="PrR-db-FaE" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="boD-sd-EVP"/>
+                <constraint firstItem="PrR-db-FaE" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="diP-jQ-E9O"/>
+                <constraint firstAttribute="bottom" secondItem="vas-lN-URq" secondAttribute="bottom" id="dzS-w8-bHY"/>
+                <constraint firstItem="PH0-jR-t0L" firstAttribute="leading" secondItem="PrR-db-FaE" secondAttribute="trailing" id="lkY-co-xzB"/>
+                <constraint firstAttribute="bottom" secondItem="PrR-db-FaE" secondAttribute="bottom" id="oxX-Hf-RY6"/>
+                <constraint firstAttribute="centerX" secondItem="PH0-jR-t0L" secondAttribute="centerX" id="q7c-yo-gHc"/>
+                <constraint firstItem="vas-lN-URq" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="sEc-aJ-zGf"/>
+                <constraint firstAttribute="trailing" secondItem="vas-lN-URq" secondAttribute="trailing" id="wXU-Od-f7J"/>
+            </constraints>
+            <connections>
+                <outlet property="favoriteButton" destination="vas-lN-URq" id="8Nl-bY-IMp"/>
+                <outlet property="replyButton" destination="PrR-db-FaE" id="4F5-4x-KpK"/>
+                <outlet property="retweetButton" destination="PH0-jR-t0L" id="jsf-z2-C1T"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="Favorite" width="32" height="32"/>
+        <image name="FavoriteOn" width="32" height="32"/>
+        <image name="FavoritePressed" width="32" height="32"/>
+        <image name="Reply" width="32" height="32"/>
+        <image name="ReplyPressed" width="32" height="32"/>
+        <image name="Retweet" width="32" height="32"/>
+        <image name="RetweetOn" width="32" height="32"/>
+        <image name="RetweetPressed" width="32" height="32"/>
+    </resources>
+</document>
