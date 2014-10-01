@@ -89,7 +89,7 @@ class TwitterClient {
 //            getHomeTimeLineLocal("twitter_home_timeline_refresh")
         } else {
             NSLog("Fetching clean home timeline ...")
-            getHomeTimeLineLocal("twitter_home_timeline2")
+//            getHomeTimeLineLocal("twitter_home_timeline2")
         }
         operationManager.GET(url, parameters: nil, success: onGetHomeTimelineSuccess, failure: onGetHomeTimelineFail)
     }
