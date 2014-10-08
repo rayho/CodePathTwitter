@@ -11,7 +11,8 @@ import UIKit
 let TWTR: TwitterClient = TwitterClient()
 let TWTR_CALLBACK_URL: NSURL = NSURL.URLWithString("djpxtwitter://oauth")
 let TWTR_NOTIF_AUTH_SUCCESS: String = "com.djprefix.twitter.AuthSuccess"
-let TWTR_NOTIF_HOME_TIMELINE_SUCCESS: String = "com.djprefix.twitter.TimelineSuccess"
+let TWTR_NOTIF_HOME_TIMELINE_SUCCESS: String = "com.djprefix.twitter.HomeTimelineSuccess"
+let TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS: String = "com.djprefix.twitter.MentionsTimelineSuccess"
 let TWTR_NOTIF_POST_TWEET_SUCCESS: String = "com.djprefix.twitter.PostTweetSuccess"
 let TWTR_NOTIF_POST_RETWEET_SUCCESS: String = "com.djprefix.twitter.PostRetweetSuccess"
 let TWTR_NOTIF_POST_FAVORITE_SUCCESS: String = "com.djprefix.twitter.PostFavoriteSuccess"
@@ -33,7 +34,7 @@ class TwitterClient {
 
     // Determines whether we're authorized to pull the user's Twitter feed, profile, etc.
     func isAuthorized() -> Bool {
-        return operationManager.authorized
+        return operationManager.authorized && User.getMe() != nil
     }
 
     // OAuth Step 1: Request token
@@ -68,13 +69,24 @@ class TwitterClient {
         }
     }
 
+    // OAuth "Step 4": Get logged in user info
     func onHandleUserAuthCallbackUrlSuccess(accessToken: BDBOAuthToken!) {
         NSLog("Got access token: %@", accessToken.token)
-        NSNotificationCenter.defaultCenter().postNotificationName(TWTR_NOTIF_AUTH_SUCCESS, object: nil)
+        NSLog("Getting logged in user info ...")
+        operationManager.GET("1.1/account/verify_credentials.json", parameters: nil, success: onGetLoggedInUserSuccess, failure: onGetLoggedInUserFail)
     }
 
     func onHandleUserAuthCallbackUrlFail(error: NSError!) {
         NSLog("Unable to get access token: %@", error)
+    }
+
+    func onGetLoggedInUserSuccess(operation: AFHTTPRequestOperation!, response: AnyObject!) {
+        NSLog("Got user info: %@", operation.responseString)
+        User.setMe(response as NSDictionary)
+        NSNotificationCenter.defaultCenter().postNotificationName(TWTR_NOTIF_AUTH_SUCCESS, object: nil)
+    }
+
+    func onGetLoggedInUserFail(operation: AFHTTPRequestOperation!, error: NSError!) {
     }
 
     func deauthorize() {
@@ -86,16 +98,39 @@ class TwitterClient {
         if (sinceId != nil) {
             url += "&since_id=\(sinceId!)"
             NSLog("Fetching home timeline since %@ ...", sinceId!)
-//            getHomeTimeLineLocal("twitter_home_timeline_refresh")
+            getTimeLineLocal("twitter_home_timeline_refresh", successNotificationName: TWTR_NOTIF_HOME_TIMELINE_SUCCESS)
         } else {
             NSLog("Fetching clean home timeline ...")
-//            getHomeTimeLineLocal("twitter_home_timeline2")
+            getTimeLineLocal("twitter_home_timeline2", successNotificationName: TWTR_NOTIF_HOME_TIMELINE_SUCCESS)
         }
-        operationManager.GET(url, parameters: nil, success: onGetHomeTimelineSuccess, failure: onGetHomeTimelineFail)
+//        operationManager.GET(url, parameters: nil, success: onGetHomeTimelineSuccess, failure: onGetTimelineFail)
+    }
+
+    func onGetHomeTimelineSuccess(operation: AFHTTPRequestOperation!, response: AnyObject!) {
+        NSLog("Successfully fetched home timeline: %@", operation.responseString)
+        parseTimeline(response, successNotificationName: TWTR_NOTIF_HOME_TIMELINE_SUCCESS)
+    }
+
+    func getMentionsTimeline(sinceId: String?) {
+        var url: String = "1.1/statuses/mentions_timeline.json?count=20";
+        if (sinceId != nil) {
+            url += "&since_id=\(sinceId!)"
+            NSLog("Fetching mentions timeline since %@ ...", sinceId!)
+            getTimeLineLocal("twitter_mentions_timeline", successNotificationName: TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS)
+        } else {
+            NSLog("Fetching clean mentions timeline ...")
+            getTimeLineLocal("twitter_mentions_timeline", successNotificationName: TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS)
+        }
+//        operationManager.GET(url, parameters: nil, success: onGetMentionsTimelineSuccess, failure: onGetTimelineFail)
+    }
+
+    func onGetMentionsTimelineSuccess(operation: AFHTTPRequestOperation!, response: AnyObject!) {
+        NSLog("Successfully fetched home timeline: %@", operation.responseString)
+        parseTimeline(response, successNotificationName: TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS)
     }
 
     // Debug function to fetch a local version of the home timeline response
-    func getHomeTimeLineLocal(name: String) {
+    func getTimeLineLocal(name: String, successNotificationName: String) {
         let queue: dispatch_queue_t = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
         dispatch_async(queue, {
             let filePath: String = NSBundle.mainBundle().pathForResource(name, ofType: "json")!
@@ -103,17 +138,13 @@ class TwitterClient {
             var error: NSErrorPointer = NSErrorPointer()
             var response: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.allZeros, error: error)
             if (response != nil) {
-                self.parseTimeline(response!)
+                self.parseTimeline(response!, successNotificationName: successNotificationName)
             }
         })
     }
 
-    func onGetHomeTimelineSuccess(operation: AFHTTPRequestOperation!, response: AnyObject!) {
-        NSLog("Successfully fetched home timeline: %@", operation.responseString)
-        parseTimeline(response)
-    }
-
-    func parseTimeline(response: AnyObject) {
+    // Parses tweet timelines
+    func parseTimeline(response: AnyObject, successNotificationName: String) {
         // Parse JSON into entities in the background
         let queue: dispatch_queue_t = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
         dispatch_async(queue, {
@@ -124,13 +155,13 @@ class TwitterClient {
                 tweets.append(tweetEntity)
             }
             dispatch_async(dispatch_get_main_queue(), {
-                NSNotificationCenter.defaultCenter().postNotificationName(TWTR_NOTIF_HOME_TIMELINE_SUCCESS, object: tweets)
+                NSNotificationCenter.defaultCenter().postNotificationName(successNotificationName, object: tweets)
             })
         })
     }
 
-    func onGetHomeTimelineFail(operation: AFHTTPRequestOperation!, error: NSError!) {
-        NSLog("Unable to fetch home timeline: %@", error)
+    func onGetTimelineFail(operation: AFHTTPRequestOperation!, error: NSError!) {
+        NSLog("Unable to fetch timeline: %@", error)
     }
 
     func postTweet(text: String, inReplyToStatusId: String?) {

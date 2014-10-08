@@ -8,18 +8,24 @@
 
 import UIKit
 
+let TWTR_NOTIF_TIMELINE_CELL_AVATAR_TAP: String = "com.djprefix.twitter.TimelineCellAvatarTap"
 let TimelineCellReuseIdentifier: String = "timelineCell";
 class TimelineCell: UITableViewCell {
+    var tweet: Tweet!
     var avatarView: UIImageView!
     var tweetTextView: UILabel!
     var realNameView: UILabel!
     var screenNameView: UILabel!
     var timeView: UILabel!
+    var tapRecognizer: UITapGestureRecognizer!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        tapRecognizer = UITapGestureRecognizer(target: self, action: "onTap:")
         avatarView = UIImageView()
         avatarView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        avatarView.userInteractionEnabled = true
+        avatarView.addGestureRecognizer(tapRecognizer)
         realNameView = UILabel()
         realNameView.setTranslatesAutoresizingMaskIntoConstraints(false)
         realNameView.numberOfLines = 1
@@ -49,7 +55,14 @@ class TimelineCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
 
+    func onTap(gestureRecognizer: UITapGestureRecognizer) {
+        if (gestureRecognizer.view == avatarView) {
+            NSNotificationCenter.defaultCenter().postNotificationName(TWTR_NOTIF_TIMELINE_CELL_AVATAR_TAP, object: tweet.user)
+        }
+    }
+
     func populate(tweet: Tweet) {
+        self.tweet = tweet
         avatarView.image = nil
         let avatarUrl: NSString? = tweet.user.avatarUrl
         if (avatarUrl != nil) {

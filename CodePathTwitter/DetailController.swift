@@ -20,6 +20,7 @@ class DetailController: UIViewController, TweetActionButtonsDelegate {
     var numFavoriteView: UILabel!
     var numFavoriteLabel: UILabel!
     var tweetActions: TweetActionButtons!
+    var tapGestureRecognizer: UITapGestureRecognizer!
 
     // Convenience method to launch this view controller
     class func launch(fromNavController: UINavigationController, tweet: Tweet) {
@@ -33,10 +34,15 @@ class DetailController: UIViewController, TweetActionButtonsDelegate {
         super.viewDidLoad()
         self.navigationItem.title = "Tweet"
 
+        // Initialize gestures
+        tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "onTap:")
+
         // Initialize views
         self.view.backgroundColor = UIColor.whiteColor()
         avatarView = UIImageView()
         avatarView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        avatarView.userInteractionEnabled = true
+        avatarView.addGestureRecognizer(tapGestureRecognizer)
         realNameView = UILabel()
         realNameView.setTranslatesAutoresizingMaskIntoConstraints(false)
         realNameView.numberOfLines = 1
@@ -85,8 +91,11 @@ class DetailController: UIViewController, TweetActionButtonsDelegate {
         self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[realNameView]-0-[screenNameView]-(>=8)-|", options: NSLayoutFormatOptions.AlignAllLeft, metrics: nil, views: viewDictionary))
     }
 
-    func clicked(sender: AnyObject) {
-        NSLog("clicked")
+    func onTap(recognizer: UITapGestureRecognizer) {
+        NSLog("tapped")
+        if (recognizer.view == avatarView) {
+            ProfileController.launch(self.navigationController!, user: tweet.user)
+        }
     }
 
     override func viewWillAppear(animated: Bool) {

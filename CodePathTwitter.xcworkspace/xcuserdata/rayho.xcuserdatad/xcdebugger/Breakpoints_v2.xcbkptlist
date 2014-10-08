@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CodePathTwitter/TwitterClient.swift"
-            timestampString = "433828927.166131"
+            filePath = "CodePathTwitter/TimelineController.swift"
+            timestampString = "434400670.311184"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
-            landmarkName = "onGetHomeTimelineSuccess(_:response:)"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "onTimelineSuccess(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,14 +25,14 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CodePathTwitter/TimelineController.swift"
-            timestampString = "433828776.770434"
+            filePath = "CodePathTwitter/MenuController.swift"
+            timestampString = "434272182.790293"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "onHomeTimelineSuccess(_:)"
-            landmarkType = "5">
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "MenuCell"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

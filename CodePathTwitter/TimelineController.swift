@@ -8,26 +8,32 @@
 
 import UIKit
 
+// Override this class, implementing methods labeled "OVERRIDE THIS"
 class TimelineController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var timelineView: UITableView!
     var timelineRefreshControl: UIRefreshControl!
     var timelineData: Array<Tweet>! = []
+    var timelineConstraintLeft: NSLayoutConstraint!
+    var timelineConstraintRight: NSLayoutConstraint!
+    var menuConstraintLeft: NSLayoutConstraint!
+    var menuConstraintRight: NSLayoutConstraint!
 
-    // Convenience method to launch this view controller
-    class func launch(fromViewController: UIViewController) {
-        var toViewController: TimelineController = TimelineController()
-        var navController: UINavigationController = UINavigationController(rootViewController: toViewController)
-        fromViewController.presentViewController(navController, animated: true, completion: nil)
+    // OVERRIDE THIS: Fetches data for a clean, empty timeline. Subclasses can override this
+    func fetchClean() {
+    }
+
+    // OVERRIDE THIS: Fetches data that is newer than the latest item in the timeline
+    func fetchNewer(newest: Tweet) {
+    }
+
+    // OVERRIDE THIS: Returns the notification name that will carry the array of tweets to populate in this timeline
+    func getSuccessNotificationName() -> String? {
+        return nil
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Construct navigation
-        self.navigationItem.title = "Twitter"
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: UIBarButtonItemStyle.Plain, target: self, action: "signOut:")
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Compose, target: self, action: "openComposer:")
 
         // Construct views
         timelineView = UITableView()
@@ -41,21 +47,35 @@ class TimelineController: UIViewController, UITableViewDataSource, UITableViewDe
         timelineView.delegate = self
         timelineRefreshControl = UIRefreshControl()
         timelineRefreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        timelineRefreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
+        timelineRefreshControl.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
         timelineView.addSubview(timelineRefreshControl)
-        let viewDictionary: Dictionary = ["timelineView": timelineView]
+        let viewDictionary: Dictionary = ["topLayoutGuide": topLayoutGuide, "timelineView": timelineView]
         view.addSubview(timelineView)
         view.layoutIfNeeded()
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[timelineView]-0-|", options: NSLayoutFormatOptions.allZeros, metrics: nil, views: viewDictionary))
+
+        // Initialize timeline horizontal constraints
+        timelineConstraintLeft = NSLayoutConstraint(
+            item: timelineView, attribute: NSLayoutAttribute.Left,
+            relatedBy: NSLayoutRelation.Equal,
+            toItem: view, attribute: NSLayoutAttribute.Left,
+            multiplier: 1, constant: 0)
+        timelineConstraintRight = NSLayoutConstraint(
+            item: timelineView, attribute: NSLayoutAttribute.Right,
+            relatedBy: NSLayoutRelation.Equal,
+            toItem: view, attribute: NSLayoutAttribute.Right,
+            multiplier: 1, constant: 0)
+        view.addConstraint(timelineConstraintLeft)
+        view.addConstraint(timelineConstraintRight)
         view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[timelineView]-0-|", options: NSLayoutFormatOptions.allZeros, metrics: nil, views: viewDictionary))
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onAuthSuccess:", name: TWTR_NOTIF_AUTH_SUCCESS, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onHomeTimelineSuccess:", name: TWTR_NOTIF_HOME_TIMELINE_SUCCESS, object: nil)
-        if (TWTR.isAuthorized()) {
-            TWTR.getHomeTimeline(nil)
-        } else {
-            TWTR.requestAuth()
+        // Events
+        var successNotificationName: String? = getSuccessNotificationName()
+        if (successNotificationName != nil) {
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: "onTimelineSuccess:", name: successNotificationName!, object: nil)
         }
+
+        // Load timeline
+        refresh()
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -64,15 +84,17 @@ class TimelineController: UIViewController, UITableViewDataSource, UITableViewDe
         if (indexPath != nil) {
             timelineView.deselectRowAtIndexPath(indexPath!, animated: false)
         }
+
+        // Listen for avatar taps
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onAvatarTap:", name: TWTR_NOTIF_TIMELINE_CELL_AVATAR_TAP, object: nil)
     }
 
-    func onAuthSuccess(notification: NSNotification) {
-        if (timelineData.count == 0) {
-            TWTR.getHomeTimeline(nil)
-        }
+    override func viewWillDisappear(animated: Bool) {
+        // Stop listening for avatar taps when view controller disappears
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: TWTR_NOTIF_TIMELINE_CELL_AVATAR_TAP, object: nil)
     }
 
-    func onHomeTimelineSuccess(notification: NSNotification) {
+    func onTimelineSuccess(notification: NSNotification) {
         self.timelineRefreshControl.endRefreshing()
         var moreTweets: Array<Tweet> = notification.object as Array<Tweet>
         if (timelineData.count == 0) {
@@ -90,26 +112,19 @@ class TimelineController: UIViewController, UITableViewDataSource, UITableViewDe
         timelineView.reloadData()
     }
 
-    func refresh(sender: UIRefreshControl) {
+    func onAvatarTap(notification: NSNotification) {
+        NSLog("Avatar tapped. Launching profile ...")
+        var user: User = notification.object as User
+        ProfileController.launch(navigationController!, user: user)
+    }
+
+    func refresh() {
         NSLog("Refreshing ...")
         if (timelineData.count == 0) {
-            // No items in timeline. Fetch clean.
-            TWTR.getHomeTimeline(nil)
+            fetchClean()
         } else {
-            // Items currently in timeline. Fetch newer.
-            TWTR.getHomeTimeline(timelineData[0].id)
+            fetchNewer(timelineData[0])
         }
-    }
-
-    func openComposer(sender: AnyObject) {
-        NSLog("Opening composer ...")
-        ComposeController.launch(self)
-    }
-
-    func signOut(sender: AnyObject) {
-        NSLog("Signing out ...")
-        TWTR.deauthorize()
-        dismissViewControllerAnimated(true, completion: nil)
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

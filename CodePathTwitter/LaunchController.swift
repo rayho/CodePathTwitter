@@ -41,26 +41,32 @@ class LaunchController: UIViewController {
         if (TWTR.isAuthorized()) {
             NSLog("Already signed in.")
             signInButton.hidden = true
-            launchTimeline()
+            launchMain()
         } else {
             NSLog("Not signed in.")
+
+            // Reset authorization state completely to avoid problems
+            TWTR.deauthorize()
             signInButton.hidden = false
         }
     }
 
     func signIn(sender: AnyObject) {
         NSLog("Signing in ...")
+        if (TWTR.isAuthorized()) {
+            TWTR.deauthorize()
+        }
         TWTR.requestAuth()
     }
 
     func onAuthSuccess(sender: AnyObject) {
         NSLog("Signed in.")
-        launchTimeline()
+        launchMain()
     }
 
-    func launchTimeline() {
-        NSLog("Launching timeline ...")
-        TimelineController.launch(self)
+    func launchMain() {
+        NSLog("Launching logged in screens ...")
+        MainController.launch(self)
     }
 
     deinit {
