@@ -98,12 +98,12 @@ class TwitterClient {
         if (sinceId != nil) {
             url += "&since_id=\(sinceId!)"
             NSLog("Fetching home timeline since %@ ...", sinceId!)
-            getTimeLineLocal("twitter_home_timeline_refresh", successNotificationName: TWTR_NOTIF_HOME_TIMELINE_SUCCESS)
+//            getTimeLineLocal("twitter_home_timeline_refresh", successNotificationName: TWTR_NOTIF_HOME_TIMELINE_SUCCESS)
         } else {
             NSLog("Fetching clean home timeline ...")
-            getTimeLineLocal("twitter_home_timeline2", successNotificationName: TWTR_NOTIF_HOME_TIMELINE_SUCCESS)
+//            getTimeLineLocal("twitter_home_timeline2", successNotificationName: TWTR_NOTIF_HOME_TIMELINE_SUCCESS)
         }
-//        operationManager.GET(url, parameters: nil, success: onGetHomeTimelineSuccess, failure: onGetTimelineFail)
+        operationManager.GET(url, parameters: nil, success: onGetHomeTimelineSuccess, failure: onGetTimelineFail)
     }
 
     func onGetHomeTimelineSuccess(operation: AFHTTPRequestOperation!, response: AnyObject!) {
@@ -116,12 +116,12 @@ class TwitterClient {
         if (sinceId != nil) {
             url += "&since_id=\(sinceId!)"
             NSLog("Fetching mentions timeline since %@ ...", sinceId!)
-            getTimeLineLocal("twitter_mentions_timeline", successNotificationName: TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS)
+//            getTimeLineLocal("twitter_mentions_timeline", successNotificationName: TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS)
         } else {
             NSLog("Fetching clean mentions timeline ...")
-            getTimeLineLocal("twitter_mentions_timeline", successNotificationName: TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS)
+//            getTimeLineLocal("twitter_mentions_timeline", successNotificationName: TWTR_NOTIF_MENTIONS_TIMELINE_SUCCESS)
         }
-//        operationManager.GET(url, parameters: nil, success: onGetMentionsTimelineSuccess, failure: onGetTimelineFail)
+        operationManager.GET(url, parameters: nil, success: onGetMentionsTimelineSuccess, failure: onGetTimelineFail)
     }
 
     func onGetMentionsTimelineSuccess(operation: AFHTTPRequestOperation!, response: AnyObject!) {
